@@ -99,11 +99,11 @@
                 let workerHtml = `
                 <div class="col-lg-6 mb-3">
                     <label class="form-label">Vəzifə</label>
-                    <input type="text" class="form-control" name="worker_infos[\${workerIndex}][position]" required>
+                    <input type="text" class="form-control" name="worker_infos[${workerIndex}][position]" required>
                 </div>
                 <div class="col-lg-6 mb-3">
                     <label class="form-label">Maaş</label>
-                    <input type="text" class="form-control" name="worker_infos[\${workerIndex}][salary]" required>
+                    <input type="text" class="form-control" name="worker_infos[${workerIndex}][salary]" required>
                 </div>
                 <button type="button" class="btn btn-danger w-100 remove-worker">Sil</button>
         `;

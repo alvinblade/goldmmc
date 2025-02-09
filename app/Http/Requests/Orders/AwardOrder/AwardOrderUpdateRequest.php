@@ -23,17 +23,11 @@ class AwardOrderUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'order_number' => ['nullable', 'string', 'max:255',
-                'unique:award_orders,order_number,' . $this->awardOrder],
-            'tax_id_number' => ['required', 'integer', 'digits:10'],
             'order_date' => ['required', 'date'],
             'main_part_of_order' => ['required'],
-            'd_name' => ['required', 'string', 'max:255'],
-            'd_surname' => ['required', 'string', 'max:255'],
-            'd_father_name' => ['required', 'string', 'max:255'],
             'worker_infos' => ['required', 'array'],
             'worker_infos.*.position' => ['required', 'string', 'max:255'],
-            'worker_infos.*.salary' => ['required', 'string', 'max:255'],
+            'worker_infos.*.salary' => ['required', 'numeric'],
         ];
     }
 }

@@ -36,6 +36,9 @@ class AwardOrderController extends Controller
         $awardOrders = AwardOrder::query()
             ->where('company_id', $companyId)
             ->with('company')
+            ->when($request->input('search'), function ($query) use ($request) {
+                return $query->where('order_number', 'like', '%' . $request->input('search') . '%');
+            })
             ->paginate($request->input('limit') ?? 10);
 
         return view('admin.awardOrders.index', compact('awardOrders'));
@@ -161,6 +164,10 @@ class AwardOrderController extends Controller
 
         $data = array_merge($data, [
             'order_number' => $orderNumber,
+            'tax_id_number' => $company->tax_id_number,
+            'd_name' => $company->director?->name,
+            'd_surname' => $company->director?->surname,
+            'd_father_name' => $company->director?->father_name,
             'last_char_od' => $lastCharOD,
             'company_name' => $companyName,
             'order_date' => $orderDate,
@@ -170,10 +177,16 @@ class AwardOrderController extends Controller
         $documentPath = public_path('assets/order_templates/AWARD.docx');
         $fileName = 'AWARD_ORDER_' . Str::slug($companyName . $orderNumber, '_') . '.docx';
         $filePath = public_path('assets/award_orders/' . $fileName);
+
+        $currentFilePath = public_path($awardOrder->generated_file[0]['path']);
+        if (file_exists($currentFilePath)) {
+            unlink($currentFilePath);
+        }
+
         $templateProcessor = new TemplateProcessor($documentPath);
         $this->templateProcessor($templateProcessor, $filePath, $data);
 
-        $generatedFilePath = returnOrderFile($filePath, $fileName, 'award_orders');
+        $generatedFilePath = returnOrderFile('assets/award_orders/' . $fileName, $fileName, 'award_orders');
 
         $awardOrder->update([
             'company_id' => $companyId,
@@ -188,7 +201,7 @@ class AwardOrderController extends Controller
             'generated_file' => $generatedFilePath
         ]);
 
-        unlink($filePath);
+        toast('Mükafat əmri uğurla yeniləndi', 'success');
 
         return redirect()->route('admin.awardOrders.index');
     }
@@ -211,6 +224,26 @@ class AwardOrderController extends Controller
         }
 
         return view('admin.awardOrders.show', compact('awardOrder'));
+    }
+
+    public function edit($awardOrder): RedirectResponse|View
+    {
+        $companyId = getHeaderCompanyId();
+
+        if (!$companyId) {
+            toast('Şirkət tapılmadı', 'error');
+            return redirect()->back();
+        }
+
+        $awardOrder = AwardOrder::query()
+            ->where('company_id', $companyId)->with(['company'])->find($awardOrder);
+
+        if (!$awardOrder) {
+            toast('Mükafat əmri tapılmadı', 'error');
+            return redirect()->route('admin.awardOrders.index');
+        }
+
+        return view('admin.awardOrders.edit', compact('awardOrder'));
     }
 
     private function getCompany($companyId): Builder|array|Collection|Model
