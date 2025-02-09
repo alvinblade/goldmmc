@@ -94,6 +94,16 @@
                         </span>
                     </a>
                 </li>
+                <li class="nav-main-heading">ƏMRLƏR</li>
+                <li class="nav-main-item">
+                    <a class="nav-main-link nav-main-link"
+                       aria-expanded="false" href="{{ route('admin.awardOrders.index') }}">
+                        <i class="nav-main-link-icon fas fa-list-alt"></i>
+                        <span class="nav-main-link-name">
+                            Mükafat əmrləri
+                        </span>
+                    </a>
+                </li>
                 <hr>
                 <li class="nav-main-item">
                     <a class="nav-main-link nav-main-link"

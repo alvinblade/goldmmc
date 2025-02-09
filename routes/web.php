@@ -7,6 +7,7 @@ use App\Http\Controllers\GoldMMC\CurrencyController;
 use App\Http\Controllers\GoldMMC\Employees\EmployeeController;
 use App\Http\Controllers\GoldMMC\Employees\PositionController;
 use App\Http\Controllers\GoldMMC\EnvelopeController;
+use App\Http\Controllers\GoldMMC\Orders\AwardOrderController;
 use App\Http\Controllers\GoldMMC\RentalContractController;
 use App\Http\Controllers\GoldMMC\Users\UserController;
 use App\Http\Controllers\ProfileController;
@@ -100,6 +101,19 @@ Route::middleware(['auth', 'add_company_header'])->prefix('admin')->group(functi
         Route::get('/{company}/edit', [CompanyController::class, 'edit'])->name('admin.companies.edit');
         Route::post('/{company}/edit', [CompanyController::class, 'update'])->name('admin.companies.update');
         Route::delete('/{company}', [CompanyController::class, 'destroy'])->name('admin.companies.destroy');
+    });
+
+    Route::prefix('award-orders')->group(function () {
+        Route::get('/', [AwardOrderController::class, 'index'])->name('admin.awardOrders.index');
+        Route::get('/create', [AwardOrderController::class, 'create'])->name('admin.awardOrders.create');
+        Route::post('/', [AwardOrderController::class, 'store'])->name('admin.awardOrders.store');
+        Route::get('/{awardOrder}', [AwardOrderController::class, 'show'])->name('admin.awardOrders.show');
+        Route::get('/{awardOrder}/edit', [AwardOrderController::class, 'edit'])
+            ->name('admin.awardOrders.edit');
+        Route::post('/{awardOrder}/edit', [AwardOrderController::class, 'update'])
+            ->name('admin.awardOrders.update');
+        Route::delete('/{awardOrder}', [AwardOrderController::class, 'destroy'])
+            ->name('admin.awardOrders.destroy');
     });
 });
 

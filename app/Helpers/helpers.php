@@ -257,7 +257,23 @@ if (!function_exists("returnFilesArrayAws")) {
     }
 }
 if (!function_exists("returnOrderFile")) {
-    function returnOrderFile($file, $fileName, $bucket): array
+    function returnOrderFile($filePath, $fileName, $folder): array
+    {
+        $returnedArray = [];
+
+        $returnedArray[] = [
+            'url' => env('BASE_URL') . '/' . $filePath,
+            'path' => $filePath,
+            'folder' => $folder,
+            'generated_name' => $fileName,
+            'original_name' => $fileName,
+        ];
+
+        return $returnedArray;
+    }
+}
+if (!function_exists("returnOrderFileAws")) {
+    function returnOrderFileAws($file, $fileName, $bucket): array
     {
         $returnedArray = [];
         $s3 = App::make('aws')->createClient('s3');
