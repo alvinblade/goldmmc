@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->string('name')->nullable();
             $table->string('surname')->nullable();
             $table->string('father_name')->nullable();
-            $table->enum('gender', GenderTypes::toArray());
+            $table->enum('gender', GenderTypes::toArray())->nullable();
             $table->date('start_date')->nullable();
             $table->string('position')->nullable();
             $table->float('salary')->nullable();

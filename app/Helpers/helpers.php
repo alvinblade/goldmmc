@@ -10,8 +10,6 @@ use App\Enums\GenderTypes;
 use App\Enums\RentalTypes;
 use App\Enums\StatusTypesEnum;
 use App\Enums\UserTypesEnum;
-use App\Models\Orders\HiringOrder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 use NumberToWords\Exception\NumberToWordsException;

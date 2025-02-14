@@ -78,7 +78,7 @@
                 <li class="nav-main-heading">TABEL ŞABLONU & CƏDVƏLİ</li>
                 <li class="nav-main-item">
                     <a class="nav-main-link nav-main-link"
-                       aria-expanded="false" href="{{ route('admin.positions.index') }}">
+                       aria-expanded="false" href="{{ route('admin.attendanceLogConfigs.index') }}">
                         <i class="nav-main-link-icon fas fa-calendar-days"></i>
                         <span class="nav-main-link-name">
                             Tabel şablonu
@@ -87,7 +87,7 @@
                 </li>
                 <li class="nav-main-item">
                     <a class="nav-main-link nav-main-link"
-                       aria-expanded="false" href="{{ route('admin.positions.index') }}">
+                       aria-expanded="false" href="{{ route('admin.attendanceLogs.index') }}">
                         <i class="nav-main-link-icon fas fa-calendar-check"></i>
                         <span class="nav-main-link-name">
                             Tabel cədvəli
@@ -95,6 +95,60 @@
                     </a>
                 </li>
                 <li class="nav-main-heading">ƏMRLƏR</li>
+                <li class="nav-main-item">
+                    <a class="nav-main-link nav-main-link"
+                       aria-expanded="false" href="{{ route('admin.hiringOrders.index') }}">
+                        <i class="nav-main-link-icon fas fa-list-alt"></i>
+                        <span class="nav-main-link-name">
+                            İşə götürmə əmrləri
+                        </span>
+                    </a>
+                </li>
+                <li class="nav-main-item">
+                    <a class="nav-main-link nav-main-link"
+                       aria-expanded="false" href="{{ route('admin.businessTripOrders.index') }}">
+                        <i class="nav-main-link-icon fas fa-list-alt"></i>
+                        <span class="nav-main-link-name">
+                            Ezamiyyət əmrləri
+                        </span>
+                    </a>
+                </li>
+                <li class="nav-main-item">
+                    <a class="nav-main-link nav-main-link"
+                       aria-expanded="false" href="{{ route('admin.defaultHolidayOrders.index') }}">
+                        <i class="nav-main-link-icon fas fa-list-alt"></i>
+                        <span class="nav-main-link-name">
+                            Məzuniyyət əmrləri
+                        </span>
+                    </a>
+                </li>
+                <li class="nav-main-item">
+                    <a class="nav-main-link nav-main-link"
+                       aria-expanded="false" href="{{ route('admin.illnessOrders.index') }}">
+                        <i class="nav-main-link-icon fas fa-list-alt"></i>
+                        <span class="nav-main-link-name">
+                            Ə.Q itirilməsi əmrləri
+                        </span>
+                    </a>
+                </li>
+                <li class="nav-main-item">
+                    <a class="nav-main-link nav-main-link"
+                       aria-expanded="false" href="{{ route('admin.pregnantOrders.index') }}">
+                        <i class="nav-main-link-icon fas fa-list-alt"></i>
+                        <span class="nav-main-link-name">
+                            Hamiləlik məzuniyyəti əmrləri
+                        </span>
+                    </a>
+                </li>
+                <li class="nav-main-item">
+                    <a class="nav-main-link nav-main-link"
+                       aria-expanded="false" href="{{ route('admin.motherhoodOrders.index') }}">
+                        <i class="nav-main-link-icon fas fa-list-alt"></i>
+                        <span class="nav-main-link-name">
+                            Analıq məzuniyyəti əmrləri
+                        </span>
+                    </a>
+                </li>
                 <li class="nav-main-item">
                     <a class="nav-main-link nav-main-link"
                        aria-expanded="false" href="{{ route('admin.awardOrders.index') }}">

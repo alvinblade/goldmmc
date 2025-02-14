@@ -6,7 +6,6 @@
 @section('page_styles')
     <link rel="stylesheet" href="{{ asset('assets/admin/js/plugins/flatpickr/flatpickr.min.css') }}">
     <link rel="stylesheet" href={{asset('assets/admin/js/plugins/select2/css/select2.min.css')}}>
-
 @endsection
 @section('content')
     <main id="main-container">
@@ -66,7 +65,6 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-
                                     <div class="col-lg-6 mb-3">
                                         <label class="form-label">Maaş</label>
                                         <input type="text"
@@ -79,8 +77,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <button type="button" class="btn btn-warning w-100 my-3" id="add-worker">Vəzifə/Maaş əlavə
-                                et
+                            <button type="button" class="btn btn-info w-100 my-3" id="add-worker">Vəzifə/Maaş əlavə
+                                et <i class="fa fa-plus"></i>
                             </button>
                             <button class="btn btn-primary w-100">Əlavə et</button>
                         </div>
@@ -97,18 +95,18 @@
             document.getElementById('add-worker').addEventListener('click', function () {
                 let workerContainer = document.getElementById('worker-container');
                 let workerHtml = `
-                <div class="col-lg-6 mb-3">
+                <div class="col-lg-5 mb-3">
                     <label class="form-label">Vəzifə</label>
                     <input type="text" class="form-control" name="worker_infos[${workerIndex}][position]" required>
                 </div>
-                <div class="col-lg-6 mb-3">
+                <div class="col-lg-5 mb-3">
                     <label class="form-label">Maaş</label>
                     <input type="text" class="form-control" name="worker_infos[${workerIndex}][salary]" required>
                 </div>
-                <button type="button" class="btn btn-danger w-100 remove-worker">Sil</button>
+                <button type="button" class="btn btn-danger remove-worker col-lg-2"><i class="fa fa-times"></i></button>
         `;
                 let div = document.createElement('div');
-                div.classList.add('worker-info', 'row');
+                div.classList.add('worker-info', 'row', 'my-2');
                 div.innerHTML = workerHtml;
                 workerContainer.appendChild(div);
                 workerIndex++;

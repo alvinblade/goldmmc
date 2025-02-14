@@ -4,23 +4,18 @@ namespace App\Http\Controllers\GoldMMC\Orders;
 
 use App\Enums\AttendanceLogDayTypes;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\V1\Orders\MotherhoodHolidayOrder\MotherhoodHolidayOrderStoreRequest;
-use App\Http\Requests\Api\V1\Orders\MotherhoodHolidayOrder\MotherhoodHolidayOrderUpdateRequest;
-use App\Http\Resources\Api\V1\Orders\MotherhoodHolidayOrders\MotherhoodHolidayOrderCollection;
-use App\Http\Resources\Api\V1\Orders\MotherhoodHolidayOrders\MotherhoodHolidayOrderResource;
+use App\Http\Requests\Orders\MotherhoodHolidayOrder\MotherhoodHolidayOrderStoreRequest;
 use App\Models\Company\AttendanceLog;
 use App\Models\Company\Company;
-use App\Models\Employee;
+use App\Models\Company\Employee;
 use App\Models\Orders\MotherhoodHolidayOrder;
-use App\Traits\HttpResponses;
-use Aws\Laravel\AwsFacade as AWS;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\View\View;
+use DB;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
 use PhpOffice\PhpWord\Exception\CopyFileException;
 use PhpOffice\PhpWord\Exception\CreateTemporaryFileException;
@@ -28,34 +23,54 @@ use PhpOffice\PhpWord\TemplateProcessor;
 
 class MotherhoodOrderController extends Controller
 {
-    use HttpResponses;
-
-    public function index(Request $request): JsonResponse
+    public function index(): View|RedirectResponse
     {
         $companyId = getHeaderCompanyId();
 
         if (!$companyId) {
-            return $this->error(message: "Şirkət tapılmadı", code: 404);
+            toast('Şirkət tapılmadı', 'error');
+            return redirect()->back();
         }
 
         $motherhoodHolidayOrders = MotherhoodHolidayOrder::query()
             ->where('company_id', $companyId)
             ->with('company')
-            ->paginate($request->input('limit') ?? 10);
+            ->when(request()->filled('search'), function ($query) {
+                return $query->where('order_number', 'like', '%' . request('search') . '%');
+            })
+            ->paginate(10);
 
-        return $this->success(data: new MotherhoodHolidayOrderCollection($motherhoodHolidayOrders));
+        return view('admin.motherhoodOrders.index', compact('motherhoodHolidayOrders'));
+    }
+
+    public function create(): View|RedirectResponse
+    {
+        $companyId = getHeaderCompanyId();
+
+        if (!$companyId) {
+            toast('Şirkət tapılmadı', 'error');
+            return redirect()->back();
+        }
+
+        $employees = Employee::query()
+            ->with('position')
+            ->where('company_id', $companyId)
+            ->get();
+
+        return view('admin.motherhoodOrders.create', compact('employees'));
     }
 
     /**
      * @throws CopyFileException
      * @throws CreateTemporaryFileException
      */
-    public function store(MotherhoodHolidayOrderStoreRequest $request): JsonResponse
+    public function store(MotherhoodHolidayOrderStoreRequest $request): RedirectResponse
     {
         $companyId = getHeaderCompanyId();
 
         if (!$companyId) {
-            return $this->error(message: "Şirkət tapılmadı", code: 404);
+            toast('Şirkət tapılmadı', 'error');
+            return redirect()->back();
         }
 
         $data = $request->validated();
@@ -66,7 +81,8 @@ class MotherhoodOrderController extends Controller
             ->with('position')->find($request->input('employee_id'));
 
         if (!$employee) {
-            return $this->error(message: "İşçi tapılmadı", code: 404);
+            toast('İşçi tapılmadı', 'error');
+            return redirect()->back();
         }
 
         $orderNumber = generateOrderNumber(MotherhoodHolidayOrder::class, $company->company_short_name);
@@ -90,7 +106,8 @@ class MotherhoodOrderController extends Controller
             ->first();
 
         if (!$existsAttendanceLog) {
-            return $this->error(message: 'İşçi tabeldə mövcud deyil', code: 404);
+            toast('İşçi tabeldə mövcud deyil', 'error');
+            return redirect()->back();
         }
 
         $attendanceLogs = AttendanceLog::query()
@@ -99,6 +116,8 @@ class MotherhoodOrderController extends Controller
             ->whereBetween('year', [$startYear, $endYear])
             ->whereBetween('month', [$startMonth, $endMonth])
             ->get();
+
+        $jsonDataOfAttendanceLogs = collect($attendanceLogs->toArray())->toJson();
 
         foreach ($attendanceLogs as $log) {
             $monthDays = [];
@@ -110,9 +129,8 @@ class MotherhoodOrderController extends Controller
                     if ($day['status'] == AttendanceLogDayTypes::NULL_DAY->value) {
                         DB::rollBack();
 
-                        return $this->error(
-                            message: "Məzuniyyət tarixi aralığı tabel üzrə düzgün qeyd olunmayıb",
-                            code: 400);
+                        toast('Analıq məzuniyyəti tarixi aralığı tabel üzrə düzgün qeyd olunmayıb', 'error');
+                        return redirect()->back();
                     }
 
                     $day['status'] = AttendanceLogDayTypes::DEFAULT_HOLIDAY->value;
@@ -181,140 +199,27 @@ class MotherhoodOrderController extends Controller
             'd_name' => $company->director?->name,
             'd_surname' => $company->director?->surname,
             'd_father_name' => $company->director?->father_name,
-            'main_part_of_order' => $request->input('main_part_of_order')
+            'main_part_of_order' => $request->input('main_part_of_order'),
+            'backup_of_logs' => $jsonDataOfAttendanceLogs,
         ]);
 
-        $generatedFilePath = returnOrderFile($filePath, $fileName, 'motherhood_holiday_orders');
+        $generatedFilePath = returnOrderFile('assets/motherhood_holiday_orders/' . $fileName,
+            $fileName, 'motherhood_holiday_orders');
 
         $motherhoodHolidayOrder->update([
             'generated_file' => $generatedFilePath
         ]);
-
-        unlink($filePath);
 
         DB::commit();
 
-        return $this->success(data: $motherhoodHolidayOrder, message: 'Məzuniyyət əmri uğurla yaradıldı');
-    }
+        toast('Analıq məzuniyyəti əmri uğurla yaradıldı', 'success');
 
-    /**
-     * @throws CopyFileException
-     * @throws CreateTemporaryFileException
-     */
-    public function update(MotherhoodHolidayOrderUpdateRequest $request, $motherhoodHolidayOrder): JsonResponse
-    {
-        $companyId = getHeaderCompanyId();
-
-        if (!$companyId) {
-            return $this->error(message: 'Şirkət tapılmadı', code: 404);
-        }
-
-        $data = $request->validated();
-        $motherhoodHolidayOrder = MotherhoodHolidayOrder::query()
-            ->where('company_id', $companyId)
-            ->find($motherhoodHolidayOrder);
-
-        if (!$motherhoodHolidayOrder) {
-            return $this->error(message: 'Məzuniyyət əmri tapılmadı', code: 404);
-        }
-
-        $orderNumber = $motherhoodHolidayOrder->order_number;
-
-        $company = $this->getCompany($companyId);
-        $companyName = $company->company_name;
-        $employee = Employee::query()
-            ->where('company_id', $companyId)
-            ->with('position')->find($request->input('employee_id'));
-
-        $holidayStartDate = Carbon::parse($request->input('holiday_start_date'))->format('d.m.Y');
-        $holidayEndDate = Carbon::parse($request->input('holiday_end_date'))->format('d.m.Y');
-        $employmentStartDate = Carbon::parse($request->input('employment_start_date'))->format('d.m.Y');
-
-        $gender = getGender($employee->gender);
-
-        $data = array_merge($data, [
-            'order_number' => $orderNumber,
-            'name' => $employee->name,
-            'position' => $employee->position?->name,
-            'surname' => $employee->surname,
-            'father_name' => $employee->father_name,
-            'company_name' => $companyName,
-            'tax_id_number' => $company->tax_id_number,
-            'gender' => $gender,
-            'holiday_start_date' => $holidayStartDate,
-            'holiday_end_date' => $holidayEndDate,
-            'employment_start_date' => $employmentStartDate,
-            'd_name' => $company->director?->name,
-            'd_surname' => $company->director?->surname,
-            'd_father_name' => $company->director?->father_name,
-            'company_id' => $companyId
-        ]);
-
-        $documentPath = public_path('assets/order_templates/MOTHERHOOD_HOLIDAY.docx');
-        $fileName = 'MOTHERHOOD_HOLIDAY_ORDER_' . Str::slug($companyName . $orderNumber, '_') . '.docx';
-        $filePath = public_path('assets/motherhood_holiday_orders/' . $fileName);
-        $templateProcessor = new TemplateProcessor($documentPath);
-        $this->templateProcessor($templateProcessor, $filePath, $data);
-
-        $motherhoodHolidayOrderCurrentFile = $motherhoodHolidayOrder->generated_file ?? [];
-
-        $s3 = AWS::createClient('s3');
-        $s3->deleteObject(array(
-            'Bucket' => $motherhoodHolidayOrderCurrentFile[0]['bucket'],
-            'Key' => $motherhoodHolidayOrderCurrentFile[0]['generated_name']
-        ));
-
-        $generatedFilePath = returnOrderFile($filePath, $fileName, 'motherhood_holiday_orders');
-
-        $motherhoodHolidayOrder->update([
-            'company_id' => $companyId,
-            'company_name' => $companyName,
-            'tax_id_number' => $company->tax_id_number,
-            'name' => $employee->name,
-            'surname' => $employee->surname,
-            'father_name' => $employee->father_name,
-            'position' => $employee->position?->name,
-            'gender' => $employee->gender,
-            'holiday_start_date' => $request->input('holiday_start_date'),
-            'holiday_end_date' => $request->input('holiday_end_date'),
-            'employment_start_date' => $request->input('employment_start_date'),
-            'd_name' => $company->director?->name,
-            'd_surname' => $company->director?->surname,
-            'd_father_name' => $company->director?->father_name,
-            'type_of_holiday' => $request->input('type_of_holiday'),
-            'main_part_of_order' => $request->input('main_part_of_order'),
-            'generated_file' => $generatedFilePath
-        ]);
-
-        unlink($filePath);
-
-        return $this->success(data: $motherhoodHolidayOrder,
-            message: 'Məzuniyyət əmri uğurla yeniləndi');
-    }
-
-
-    public function show($motherhoodHolidayOrder): JsonResponse
-    {
-        $companyId = getHeaderCompanyId();
-
-        if (!$companyId) {
-            return $this->error(message: 'Şirkət tapılmadı', code: 404);
-        }
-
-        $motherhoodHolidayOrder = MotherhoodHolidayOrder::query()
-            ->where('company_id', $companyId)
-            ->with('company')->find($motherhoodHolidayOrder);
-
-        if (!$motherhoodHolidayOrder) {
-            return $this->error(message: 'Məzuniyyət əmri tapılmadı', code: 404);
-        }
-
-        return $this->success(data: MotherhoodHolidayOrderResource::make($motherhoodHolidayOrder));
+        return redirect()->route('admin.motherhoodOrders.index');
     }
 
     private function getCompany($companyId): Builder|array|Collection|Model
     {
-        return Company::query()->with(['mainUser', 'director'])->find($companyId);
+        return Company::query()->with(['mainEmployee', 'director'])->find($companyId);
     }
 
     private function templateProcessor(TemplateProcessor $templateProcessor, $filePath, $data): void
@@ -338,12 +243,13 @@ class MotherhoodOrderController extends Controller
         $templateProcessor->saveAs($filePath);
     }
 
-    public function destroy($motherhoodHolidayOrder): JsonResponse
+    public function destroy($motherhoodHolidayOrder): RedirectResponse
     {
         $companyId = getHeaderCompanyId();
 
         if (!$companyId) {
-            return $this->error(message: 'Şirkət tapılmadı', code: 404);
+            toast('Şirkət tapılmadı', 'error');
+            return redirect()->back();
         }
 
         $motherhoodHolidayOrder = MotherhoodHolidayOrder::query()
@@ -351,26 +257,36 @@ class MotherhoodOrderController extends Controller
             ->find($motherhoodHolidayOrder);
 
         if (!$motherhoodHolidayOrder) {
-            return $this->error(message: 'Məzuniyyət əmri tapılmadı', code: 404);
+            toast('Analıq məzuniyyəti əmri tapılmadı', 'error');
+            return redirect()->back();
         }
 
-        $motherhoodHolidayOrderCurrentFile = $motherhoodHolidayOrder->generated_file ?? [];
+        foreach (json_decode($motherhoodHolidayOrder->backup_of_logs, true) as $log) {
+            $dbLog = AttendanceLog::query()
+                ->where(function ($query) use ($log) {
+                    $query
+                        ->where('id', $log['id'])
+                        ->where('employee_id', $log['employee_id']);
+                })
+                ->first();
 
-        $s3 = AWS::createClient('s3');
-        $getObject = $s3->listObjects([
-            'Bucket' => $motherhoodHolidayOrderCurrentFile[0]['bucket'],
-            'Key' => $motherhoodHolidayOrderCurrentFile[0]['generated_name']
-        ]);
+            $dbLog?->update([
+                'days' => $log['days']
+            ]);
+        }
 
-        if (is_array($getObject['Contents']) && count($getObject['Contents']) > 0) {
-            $s3->deleteObject(array(
-                'Bucket' => $motherhoodHolidayOrderCurrentFile[0]['bucket'],
-                'Key' => $motherhoodHolidayOrderCurrentFile[0]['generated_name']
-            ));
+        if (!empty($motherhoodHolidayOrder->generated_file[0]['path'])) {
+            $filePath = public_path($motherhoodHolidayOrder->generated_file[0]['path']);
+
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
         }
 
         $motherhoodHolidayOrder->delete();
 
-        return $this->success(message: 'Məzuniyyət əmri uğurla silindi');
+        toast('Analıq məzuniyyəti əmri uğurla silindi', 'success');
+
+        return redirect()->route('admin.motherhoodOrders.index');
     }
 }

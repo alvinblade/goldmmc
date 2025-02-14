@@ -2,16 +2,22 @@
 
 use App\Http\Controllers\GoldMMC\ActivityCodeController;
 use App\Http\Controllers\GoldMMC\AdminDashboardController;
+use App\Http\Controllers\GoldMMC\AttendanceLogConfigController;
+use App\Http\Controllers\GoldMMC\AttendanceLogController;
 use App\Http\Controllers\GoldMMC\CompanyController;
 use App\Http\Controllers\GoldMMC\CurrencyController;
 use App\Http\Controllers\GoldMMC\Employees\EmployeeController;
 use App\Http\Controllers\GoldMMC\Employees\PositionController;
 use App\Http\Controllers\GoldMMC\EnvelopeController;
 use App\Http\Controllers\GoldMMC\Orders\AwardOrderController;
+use App\Http\Controllers\GoldMMC\Orders\BusinessTripOrderController;
+use App\Http\Controllers\GoldMMC\Orders\DefaultHolidayOrderController;
+use App\Http\Controllers\GoldMMC\Orders\HiringOrderController;
+use App\Http\Controllers\GoldMMC\Orders\IllnessOrderController;
+use App\Http\Controllers\GoldMMC\Orders\MotherhoodOrderController;
+use App\Http\Controllers\GoldMMC\Orders\PregnantOrderController;
 use App\Http\Controllers\GoldMMC\RentalContractController;
 use App\Http\Controllers\GoldMMC\Users\UserController;
-use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -103,17 +109,111 @@ Route::middleware(['auth', 'add_company_header'])->prefix('admin')->group(functi
         Route::delete('/{company}', [CompanyController::class, 'destroy'])->name('admin.companies.destroy');
     });
 
+    Route::prefix('attendance-log-configs')->group(function () {
+        Route::get('/', [AttendanceLogConfigController::class, 'index'])
+            ->name('admin.attendanceLogConfigs.index');
+        Route::get('/create', [AttendanceLogConfigController::class, 'create'])
+            ->name('admin.attendanceLogConfigs.create');
+        Route::post('/', [AttendanceLogConfigController::class, 'store'])
+            ->name('admin.attendanceLogConfigs.store');
+        Route::get('/{attendanceLogConfig}', [AttendanceLogConfigController::class, 'show'])
+            ->name('admin.attendanceLogConfigs.show');
+        Route::get('/{attendanceLogConfig}/edit', [AttendanceLogConfigController::class, 'edit'])
+            ->name('admin.attendanceLogConfigs.edit');
+        Route::post('/{attendanceLogConfig}/edit', [AttendanceLogConfigController::class, 'update'])
+            ->name('admin.attendanceLogConfigs.update');
+        Route::delete('/{attendanceLogConfig}', [AttendanceLogConfigController::class, 'destroy'])
+            ->name('admin.attendanceLogConfigs.destroy');
+    });
+
+    Route::prefix('attendance-logs')->group(function () {
+        Route::get('/', [AttendanceLogController::class, 'index'])
+            ->name('admin.attendanceLogs.index');
+        Route::get('/create', [AttendanceLogController::class, 'create'])
+            ->name('admin.attendanceLogs.create');
+        Route::post('/', [AttendanceLogController::class, 'store'])
+            ->name('admin.attendanceLogs.store');
+        Route::get('/{attendanceLog}', [AttendanceLogController::class, 'show'])
+            ->name('admin.attendanceLogs.show');
+        Route::get('/{attendanceLog}/edit', [AttendanceLogController::class, 'edit'])
+            ->name('admin.attendanceLogs.edit');
+        Route::post('/{attendanceLog}/edit', [AttendanceLogController::class, 'update'])
+            ->name('admin.attendanceLogs.update');
+        Route::delete('/{attendanceLog}', [AttendanceLogController::class, 'destroy'])
+            ->name('admin.attendanceLogs.destroy');
+    });
+
     Route::prefix('award-orders')->group(function () {
-        Route::get('/', [AwardOrderController::class, 'index'])->name('admin.awardOrders.index');
-        Route::get('/create', [AwardOrderController::class, 'create'])->name('admin.awardOrders.create');
-        Route::post('/', [AwardOrderController::class, 'store'])->name('admin.awardOrders.store');
-        Route::get('/{awardOrder}', [AwardOrderController::class, 'show'])->name('admin.awardOrders.show');
+        Route::get('/', [AwardOrderController::class, 'index'])
+            ->name('admin.awardOrders.index');
+        Route::get('/create', [AwardOrderController::class, 'create'])
+            ->name('admin.awardOrders.create');
+        Route::post('/', [AwardOrderController::class, 'store'])
+            ->name('admin.awardOrders.store');
+        Route::get('/{awardOrder}', [AwardOrderController::class, 'show'])
+            ->name('admin.awardOrders.show');
         Route::get('/{awardOrder}/edit', [AwardOrderController::class, 'edit'])
             ->name('admin.awardOrders.edit');
         Route::post('/{awardOrder}/edit', [AwardOrderController::class, 'update'])
             ->name('admin.awardOrders.update');
         Route::delete('/{awardOrder}', [AwardOrderController::class, 'destroy'])
             ->name('admin.awardOrders.destroy');
+    });
+
+    Route::prefix('hiring-orders')->group(function () {
+        Route::get('/', [HiringOrderController::class, 'index'])->name('admin.hiringOrders.index');
+        Route::get('/create', [HiringOrderController::class, 'create'])->name('admin.hiringOrders.create');
+        Route::post('/', [HiringOrderController::class, 'store'])->name('admin.hiringOrders.store');
+        Route::delete('/{hiringOrder}', [HiringOrderController::class, 'destroy'])
+            ->name('admin.hiringOrders.destroy');
+    });
+
+    Route::prefix('default-holiday-orders')->group(function () {
+        Route::get('/', [DefaultHolidayOrderController::class, 'index'])->name('admin.defaultHolidayOrders.index');
+        Route::get('/create', [DefaultHolidayOrderController::class, 'create'])
+            ->name('admin.defaultHolidayOrders.create');
+        Route::post('/', [DefaultHolidayOrderController::class, 'store'])->name('admin.defaultHolidayOrders.store');
+        Route::delete('/{defaultHolidayOrder}', [DefaultHolidayOrderController::class, 'destroy'])
+            ->name('admin.defaultHolidayOrders.destroy');
+    });
+
+    Route::prefix('business-trip-orders')->group(function () {
+        Route::get('/', [BusinessTripOrderController::class, 'index'])->name('admin.businessTripOrders.index');
+        Route::get('/create', [BusinessTripOrderController::class, 'create'])
+            ->name('admin.businessTripOrders.create');
+        Route::post('/', [BusinessTripOrderController::class, 'store'])->name('admin.businessTripOrders.store');
+        Route::delete('/{businessTripOrder}', [BusinessTripOrderController::class, 'destroy'])
+            ->name('admin.businessTripOrders.destroy');
+    });
+
+    Route::prefix('illness-orders')->group(function () {
+        Route::get('/', [IllnessOrderController::class, 'index'])
+            ->name('admin.illnessOrders.index');
+        Route::get('/create', [IllnessOrderController::class, 'create'])
+            ->name('admin.illnessOrders.create');
+        Route::post('/', [IllnessOrderController::class, 'store'])->name('admin.illnessOrders.store');
+        Route::delete('/{illnessOrder}', [IllnessOrderController::class, 'destroy'])
+            ->name('admin.illnessOrders.destroy');
+    });
+
+    Route::prefix('motherhood-orders')->group(function () {
+        Route::get('/', [MotherhoodOrderController::class, 'index'])
+            ->name('admin.motherhoodOrders.index');
+        Route::get('/create', [MotherhoodOrderController::class, 'create'])
+            ->name('admin.motherhoodOrders.create');
+        Route::post('/', [MotherhoodOrderController::class, 'store'])->name('admin.motherhoodOrders.store');
+        Route::delete('/{motherhoodOrder}', [MotherhoodOrderController::class, 'destroy'])
+            ->name('admin.motherhoodOrders.destroy');
+    });
+
+    Route::prefix('pregnant-orders')->group(function () {
+        Route::get('/', [PregnantOrderController::class, 'index'])
+            ->name('admin.pregnantOrders.index');
+        Route::get('/create', [PregnantOrderController::class, 'create'])
+            ->name('admin.pregnantOrders.create');
+        Route::post('/', [PregnantOrderController::class, 'store'])->name('admin.pregnantOrders.store');
+        Route::delete('/{pregnantOrder}', [PregnantOrderController::class, 'destroy'])
+            ->name('admin.pregnantOrders.destroy');
     });
 });
 

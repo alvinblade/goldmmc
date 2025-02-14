@@ -32,6 +32,7 @@ return new class extends Migration {
             $table->string('d_surname')->nullable();
             $table->string('d_father_name')->nullable();
             $table->jsonb('generated_file')->nullable();
+            $table->jsonb('backup_of_logs')->nullable();
             $table->timestamps();
 
             $table->foreign('company_id')->references('id')->on('companies')->cascadeOnDelete();

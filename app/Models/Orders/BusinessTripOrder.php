@@ -15,6 +15,7 @@ class BusinessTripOrder extends Model
         'generated_file' => 'array',
         'company_id' => 'integer',
         'employee_id' => 'integer',
+        'backup_of_logs' => 'array',
     ];
 
     public function company(): BelongsTo

@@ -26,7 +26,7 @@ class HiringOrderStoreRequest extends FormRequest
     {
         return [
             'employee_id' => ['required', 'integer', Rule::exists('employees', 'id')
-                ->where('company_id', request()->header('company-id')),
+                ->where('company_id', getHeaderCompanyId()),
             ],
             'start_date' => ['required', 'date'],
             'salary' => ['required', 'numeric'],

@@ -14,6 +14,7 @@ class HiringOrder extends Model
     protected $casts = [
         'generated_file' => 'array',
         'salary' => 'float',
+        'employee_id' => 'integer',
     ];
 
     public function company(): BelongsTo

@@ -13,7 +13,8 @@ class IllnessOrder extends Model
 
     protected $casts = [
         'generated_file' => 'array',
-        'company_id' => 'integer'
+        'company_id' => 'integer',
+        'backup_of_logs' => 'array'
     ];
 
     public function company(): BelongsTo

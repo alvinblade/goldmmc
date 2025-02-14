@@ -1,20 +1,22 @@
 <?php
 
-namespace App\Models\Orders;
+namespace App\Models\Company;
 
-use App\Models\Company\Company;
 use App\Models\Company\Employee;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class DefaultHolidayOrder extends Model
+class AttendanceLog extends Model
 {
     protected $guarded = [];
 
     protected $casts = [
-        'generated_file' => 'array',
+        'employee_id' => 'integer',
         'company_id' => 'integer',
-        'backup_of_logs' => 'array',
+        'days' => 'array',
+        'month_work_days' => 'integer',
+        'celebration_days' => 'integer',
+        'month_work_day_hours' => 'integer',
     ];
 
     public function company(): BelongsTo
