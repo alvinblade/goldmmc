@@ -42,6 +42,17 @@ class AttendanceLogConfigController extends Controller
         ]);
 
         $year = $request->input('year');
+        $dateForDayNames = Carbon::createFromDate(2025, 1, 6);
+
+        $dayNames = [
+            $dateForDayNames->translatedFormat('D'),
+            $dateForDayNames->addDay()->translatedFormat('D'),
+            $dateForDayNames->addDay()->translatedFormat('D'),
+            $dateForDayNames->addDay()->translatedFormat('D'),
+            $dateForDayNames->addDay()->translatedFormat('D'),
+            $dateForDayNames->addDay()->translatedFormat('D'),
+            $dateForDayNames->addDay()->translatedFormat('D'),
+        ];
 
         $config = collect(range(1, 12))->map(function ($month) use ($year) {
             return [
@@ -62,7 +73,7 @@ class AttendanceLogConfigController extends Controller
             ];
         });
 
-        return view('admin.attendanceLogConfigs.create', compact('config'));
+        return view('admin.attendanceLogConfigs.create', compact('config', 'dayNames'));
     }
 
     public function store(Request $request): RedirectResponse

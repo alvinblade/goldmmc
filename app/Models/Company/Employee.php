@@ -10,6 +10,10 @@ class Employee extends Model
 {
     protected $guarded = [];
 
+    protected $casts = [
+        'salary' => 'float',
+    ];
+
     protected $hidden = [
         'remember_token'
     ];

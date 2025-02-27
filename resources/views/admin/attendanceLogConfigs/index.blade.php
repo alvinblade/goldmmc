@@ -81,12 +81,6 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="btn-group">
-                                        <a href="{{ route('admin.attendanceLogConfigs.edit', $attendanceLogConfig->id) }}"
-                                           class="btn btn-sm btn-alt-secondary js-bs-tooltip-enabled"
-                                           data-bs-toggle="tooltip" aria-label="Edit"
-                                           data-bs-original-title="Edit" title="Düzəliş et">
-                                            <i class="fa fa-fw fa-pencil-alt"></i>
-                                        </a>
                                         <form
                                             action="{{ route('admin.attendanceLogConfigs.destroy', $attendanceLogConfig->id) }}"
                                             method="POST">

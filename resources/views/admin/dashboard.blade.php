@@ -33,44 +33,48 @@
         <div class="content">
             <!-- Overview -->
             <div class="row items-push">
-                <div class="col-sm-12 col-lg-6">
-                    <!-- Pending Orders -->
-                    <div class="block block-rounded d-flex flex-column h-100 mb-0">
-                        <div
-                            class="block-content block-content-full flex-grow-1 d-flex
-                             justify-content-between align-items-center">
-                            <dl class="mb-0">
-                                <dt class="fs-3 fw-bold">0</dt>
-                                <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0">
-                                    ÜMUMİ BORCLAR
-                                </dd>
-                            </dl>
-                            <div class="item item-rounded-lg bg-body-light">
-                                <i class="fas fa-coins fs-3 text-danger"></i>
+                @foreach($files as $fileKey => $fileValues)
+                    @if(!empty($fileValues['files']))
+                        <div class="col-6 col-md-4 col-xxl-2">
+                            <a class="block block-rounded text-center block-link-pop"
+                               style="cursor: pointer;"
+                               data-bs-toggle="offcanvas"
+                               data-bs-target="#offcanvasRight{{$fileKey}}"
+                               aria-controls="offcanvasRight{{$fileKey}}">
+                                <div class="block-content block-content-full ratio ratio-16x9">
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <div>
+                                            <i class="far fa-2x fa-file-alt text-dark"></i>
+                                            <div class="fs-sm fw-semibold mt-3 text-dark">
+                                                {{ $fileValues['title'] }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <!-- Offcanvas Right -->
+                        <div class="offcanvas offcanvas-end bg-body-extra-light p-0" tabindex="-1"
+                             id="offcanvasRight{{$fileKey}}"
+                             aria-labelledby="offcanvasRightLabel">
+                            <div class="offcanvas-header bg-body-light">
+                                <h5 class="offcanvas-title" id="offcanvasRightLabel">{{ $fileValues['title'] }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="offcanvas-body">
+                                @foreach($fileValues['files'] as $file)
+                                    <a href="{{$file['path']}}" target="_blank"
+                                       class="btn btn-alt-info w-100 mb-2">
+                                        <i class="fas fa-file"></i>
+                                        {{$file['original_name']}}
+                                    </a>
+                                @endforeach
                             </div>
                         </div>
-                    </div>
-                    <!-- END Pending Orders -->
-                </div>
-                <div class="col-sm-12 col-lg-6">
-                    <!-- Pending Orders -->
-                    <div class="block block-rounded d-flex flex-column h-100 mb-0">
-                        <div
-                            class="block-content block-content-full flex-grow-1 d-flex
-                             justify-content-between align-items-center">
-                            <dl class="mb-0">
-                                <dt class="fs-3 fw-bold">0</dt>
-                                <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0">
-                                    ÜMUMİ GƏLİR
-                                </dd>
-                            </dl>
-                            <div class="item item-rounded-lg bg-body-light">
-                                <i class="fas fa-coins fs-3 text-danger"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- END Pending Orders -->
-                </div>
+                        <!-- END Offcanvas Right -->
+                    @endif
+                @endforeach
             </div>
             <!-- END Overview -->
         </div>

@@ -75,7 +75,7 @@
                         </span>
                     </a>
                 </li>
-                <li class="nav-main-heading">TABEL ŞABLONU & CƏDVƏLİ</li>
+                <li class="nav-main-heading">TABEL & ƏMƏK HAQQI</li>
                 <li class="nav-main-item">
                     <a class="nav-main-link nav-main-link"
                        aria-expanded="false" href="{{ route('admin.attendanceLogConfigs.index') }}">
@@ -91,6 +91,15 @@
                         <i class="nav-main-link-icon fas fa-calendar-check"></i>
                         <span class="nav-main-link-name">
                             Tabel cədvəli
+                        </span>
+                    </a>
+                </li>
+                <li class="nav-main-item">
+                    <a class="nav-main-link nav-main-link"
+                       aria-expanded="false" href="{{ route('admin.salaryEmployees.index') }}">
+                        <i class="nav-main-link-icon fas fa-coins"></i>
+                        <span class="nav-main-link-name">
+                            Əmək haqqı cədvəli
                         </span>
                     </a>
                 </li>
@@ -136,7 +145,7 @@
                        aria-expanded="false" href="{{ route('admin.pregnantOrders.index') }}">
                         <i class="nav-main-link-icon fas fa-list-alt"></i>
                         <span class="nav-main-link-name">
-                            Hamiləlik məzuniyyəti əmrləri
+                            Hamiləlik məzuniyyəti
                         </span>
                     </a>
                 </li>
@@ -145,7 +154,7 @@
                        aria-expanded="false" href="{{ route('admin.motherhoodOrders.index') }}">
                         <i class="nav-main-link-icon fas fa-list-alt"></i>
                         <span class="nav-main-link-name">
-                            Analıq məzuniyyəti əmrləri
+                            Analıq məzuniyyəti
                         </span>
                     </a>
                 </li>
@@ -155,6 +164,53 @@
                         <i class="nav-main-link-icon fas fa-list-alt"></i>
                         <span class="nav-main-link-name">
                             Mükafat əmrləri
+                        </span>
+                    </a>
+                </li>
+                <li class="nav-main-item">
+                    <a class="nav-main-link nav-main-link"
+                       aria-expanded="false" href="{{ route('admin.terminationOrders.index') }}">
+                        <i class="nav-main-link-icon fas fa-list-alt"></i>
+                        <span class="nav-main-link-name">
+                            İşdən çıxma əmrləri
+                        </span>
+                    </a>
+                </li>
+                <hr>
+                <li class="nav-main-item">
+                    <a class="nav-main-link nav-main-link"
+                       aria-expanded="false" href="{{ route('admin.measures.index') }}">
+                        <i class="nav-main-link-icon fas fa-ruler"></i>
+                        <span class="nav-main-link-name">
+                            Ölçü vahidləri
+                        </span>
+                    </a>
+                </li>
+                <li class="nav-main-item">
+                    <a class="nav-main-link nav-main-link"
+                       aria-expanded="false" href="{{ route('admin.electronInvoices.index') }}">
+                        <i class="nav-main-link-icon fas fa-file-invoice"></i>
+                        <span class="nav-main-link-name">
+                            E-qaimələr
+                        </span>
+                    </a>
+                </li>
+                <li class="nav-main-heading">ANBARLAR</li>
+                <li class="nav-main-item">
+                    <a class="nav-main-link nav-main-link"
+                       aria-expanded="false" href="{{ route('admin.warehouses.index') }}">
+                        <i class="nav-main-link-icon fas fa-warehouse"></i>
+                        <span class="nav-main-link-name">
+                            Anbarlar
+                        </span>
+                    </a>
+                </li>
+                <li class="nav-main-item">
+                    <a class="nav-main-link nav-main-link"
+                       aria-expanded="false" href="{{ route('admin.warehouseItems.index') }}">
+                        <i class="nav-main-link-icon fas fa-boxes"></i>
+                        <span class="nav-main-link-name">
+                            Anbar malları
                         </span>
                     </a>
                 </li>

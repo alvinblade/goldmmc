@@ -27,6 +27,28 @@
     <!-- END Icons -->
     <link rel="stylesheet" id="css-main" href="{{ asset('assets/admin/css/oneui.min.css') }}">
     <!-- END Stylesheets -->
+    <style>
+        /* width */
+        ::-webkit-scrollbar {
+            width: 13px;
+            height: 13px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            box-shadow: inset 0 0 1px #1f2937;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #1f2937;
+        }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1f2937;
+        }
+    </style>
 </head>
 
 <body>

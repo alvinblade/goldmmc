@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\GoldMMC\Employees\SalaryController;
+use App\Http\Controllers\GoldMMC\Excel\SalaryCalculateExcelController;
 use App\Http\Controllers\GoldMMC\ActivityCodeController;
 use App\Http\Controllers\GoldMMC\AdminDashboardController;
 use App\Http\Controllers\GoldMMC\AttendanceLogConfigController;
@@ -9,6 +11,9 @@ use App\Http\Controllers\GoldMMC\CurrencyController;
 use App\Http\Controllers\GoldMMC\Employees\EmployeeController;
 use App\Http\Controllers\GoldMMC\Employees\PositionController;
 use App\Http\Controllers\GoldMMC\EnvelopeController;
+use App\Http\Controllers\GoldMMC\Excel\AttendanceLogExcelController;
+use App\Http\Controllers\GoldMMC\Invoices\ElectronInvoiceController;
+use App\Http\Controllers\GoldMMC\MeasureController;
 use App\Http\Controllers\GoldMMC\Orders\AwardOrderController;
 use App\Http\Controllers\GoldMMC\Orders\BusinessTripOrderController;
 use App\Http\Controllers\GoldMMC\Orders\DefaultHolidayOrderController;
@@ -16,8 +21,11 @@ use App\Http\Controllers\GoldMMC\Orders\HiringOrderController;
 use App\Http\Controllers\GoldMMC\Orders\IllnessOrderController;
 use App\Http\Controllers\GoldMMC\Orders\MotherhoodOrderController;
 use App\Http\Controllers\GoldMMC\Orders\PregnantOrderController;
+use App\Http\Controllers\GoldMMC\Orders\TerminationOrderController;
 use App\Http\Controllers\GoldMMC\RentalContractController;
 use App\Http\Controllers\GoldMMC\Users\UserController;
+use App\Http\Controllers\GoldMMC\Warehouse\WarehouseController;
+use App\Http\Controllers\GoldMMC\Warehouse\WarehouseItemController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,6 +56,13 @@ Route::middleware(['auth', 'add_company_header'])->prefix('admin')->group(functi
         Route::post('/excel-import', [EmployeeController::class, 'importExcel'])->name('admin.employees.excel_import');
         Route::get('/download/excel', [EmployeeController::class,
             'downloadExcel'])->name('admin.employees.excel_download');
+    });
+
+    Route::prefix('measures')->group(function () {
+        Route::get('/', [MeasureController::class, 'index'])->name('admin.measures.index');
+        Route::post('/', [MeasureController::class, 'store'])->name('admin.measures.store');
+        Route::put('/{measure}/edit', [MeasureController::class, 'update'])->name('admin.measures.update');
+        Route::delete('/{measure}', [MeasureController::class, 'destroy'])->name('admin.measures.destroy');
     });
 
     Route::prefix('positions')->group(function () {
@@ -129,6 +144,9 @@ Route::middleware(['auth', 'add_company_header'])->prefix('admin')->group(functi
     Route::prefix('attendance-logs')->group(function () {
         Route::get('/', [AttendanceLogController::class, 'index'])
             ->name('admin.attendanceLogs.index');
+        Route::get('/excel/export',
+            [AttendanceLogExcelController::class, 'exportAttendanceLogExcel'])
+            ->name('admin.attendanceLogs.excel.export');
         Route::get('/create', [AttendanceLogController::class, 'create'])
             ->name('admin.attendanceLogs.create');
         Route::post('/', [AttendanceLogController::class, 'store'])
@@ -141,6 +159,16 @@ Route::middleware(['auth', 'add_company_header'])->prefix('admin')->group(functi
             ->name('admin.attendanceLogs.update');
         Route::delete('/{attendanceLog}', [AttendanceLogController::class, 'destroy'])
             ->name('admin.attendanceLogs.destroy');
+    });
+
+    Route::prefix('salary-employees')->group(function () {
+        Route::get('/', [SalaryController::class, 'index'])
+            ->name('admin.salaryEmployees.index');
+        Route::get('/{year}', [SalaryController::class, 'show'])
+            ->name('admin.salaryEmployees.show');
+        Route::get('/excel/export',
+            [SalaryCalculateExcelController::class, 'exportSalaryCalculateExcel'])
+            ->name('admin.salaryEmployees.excel.export');
     });
 
     Route::prefix('award-orders')->group(function () {
@@ -214,6 +242,45 @@ Route::middleware(['auth', 'add_company_header'])->prefix('admin')->group(functi
         Route::post('/', [PregnantOrderController::class, 'store'])->name('admin.pregnantOrders.store');
         Route::delete('/{pregnantOrder}', [PregnantOrderController::class, 'destroy'])
             ->name('admin.pregnantOrders.destroy');
+    });
+
+    Route::prefix('termination-orders')->group(function () {
+        Route::get('/', [TerminationOrderController::class, 'index'])
+            ->name('admin.terminationOrders.index');
+        Route::get('/create', [TerminationOrderController::class, 'create'])
+            ->name('admin.terminationOrders.create');
+        Route::post('/', [TerminationOrderController::class, 'store'])->name('admin.terminationOrders.store');
+        Route::delete('/{terminationOrder}', [TerminationOrderController::class, 'destroy'])
+            ->name('admin.terminationOrders.destroy');
+    });
+
+    Route::prefix('electron-invoices')->group(function () {
+        Route::get('/', [ElectronInvoiceController::class, 'index'])
+            ->name('admin.electronInvoices.index');
+        Route::get('/create', [ElectronInvoiceController::class, 'create'])
+            ->name('admin.electronInvoices.create');
+        Route::post('/', [ElectronInvoiceController::class, 'store'])->name('admin.electronInvoices.store');
+        Route::get('/show/{electronInvoiceId}', [ElectronInvoiceController::class, 'show'])
+            ->name('admin.electronInvoices.show');
+        Route::get('/edit/{electronInvoiceId}', [ElectronInvoiceController::class, 'edit'])
+            ->name('admin.electronInvoices.edit');
+        Route::post('/{electronInvoiceId}', [ElectronInvoiceController::class, 'update'])
+            ->name('admin.electronInvoices.update');
+        Route::delete('/{electronInvoiceId}', [ElectronInvoiceController::class, 'destroy'])
+            ->name('admin.electronInvoices.destroy');
+    });
+
+    Route::prefix('warehouses')->group(function () {
+        Route::get('/', [WarehouseController::class, 'index'])->name('admin.warehouses.index');
+        Route::post('/', [WarehouseController::class, 'store'])->name('admin.warehouses.store');
+        Route::put('/{warehouse}/edit', [WarehouseController::class, 'update'])->name('admin.warehouses.update');
+        Route::delete('/{warehouse}', [WarehouseController::class, 'destroy'])->name('admin.warehouses.destroy');
+    });
+
+    Route::prefix('warehouse-items')->group(function () {
+        Route::get('/', [WarehouseItemController::class, 'index'])->name('admin.warehouseItems.index');
+        Route::delete('/{warehouseItem}', [WarehouseItemController::class, 'destroy'])
+            ->name('admin.warehouseItems.destroy');
     });
 });
 

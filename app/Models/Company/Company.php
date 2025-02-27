@@ -2,6 +2,7 @@
 
 namespace App\Models\Company;
 
+use App\Models\Company\Invoice\ElectronInvoice;
 use App\Models\Contract\RentalContract;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -61,5 +62,10 @@ class Company extends Model
     public function rentalContracts(): HasMany
     {
         return $this->hasMany(RentalContract::class, 'company_id');
+    }
+
+    public function electronInvoices(): HasMany
+    {
+        return $this->hasMany(ElectronInvoice::class, 'company_id');
     }
 }

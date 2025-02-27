@@ -15,8 +15,9 @@ class AttendanceLog extends Model
         'company_id' => 'integer',
         'days' => 'array',
         'month_work_days' => 'integer',
+        'month_work_hours' => 'integer',
         'celebration_days' => 'integer',
-        'month_work_day_hours' => 'integer',
+        'month_work_day_hours' => 'integer'
     ];
 
     public function company(): BelongsTo

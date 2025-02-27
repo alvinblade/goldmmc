@@ -26,6 +26,16 @@
                 <div class="block block-rounded">
                     <div class="block-header block-header-default">
                         <h3 class="block-title">TABEL CƏDVƏLİ {{ $year }} - {{ $monthName }}</h3>
+                        <div class="block-options">
+                            <div class="block-options-item">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <a href="{{ route('admin.attendanceLogs.excel.export', ['year' => $year, 'month' => $month]) }}"
+                                       class="btn btn-primary">
+                                        Excel export <i class="fas fa-file-excel"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="block-content">
                         <table class="js-table-sections table table-sm table-vcenter">

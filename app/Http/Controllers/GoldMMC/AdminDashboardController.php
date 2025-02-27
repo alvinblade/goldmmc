@@ -4,21 +4,61 @@ namespace App\Http\Controllers\GoldMMC;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company\Company;
-use Illuminate\Contracts\Foundation\Application as App;
-use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
-use Illuminate\Foundation\Application;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Validation\Rule;
 
 class AdminDashboardController extends Controller
 {
-    public function dashboard(Request $request): View|Application|Factory|App
+    public function dashboard(): View|RedirectResponse
     {
         $selectedCompany = Company::query()->find(session('selected_company_id'));
 
-        return view('admin.dashboard', compact('selectedCompany'));
+        if (!$selectedCompany) {
+            toast("Şirkət tapılmadı", 'error');
+            return redirect()->back();
+        }
+
+        $taxIdNumberFiles = $selectedCompany->tax_id_number_files ?? [];
+        $charterFiles = $selectedCompany->charter_files ?? [];
+        $extractFiles = $selectedCompany->extract_files ?? [];
+        $directorIdCardFiles = $selectedCompany->director_id_card_files ?? [];
+        $creatorsFiles = $selectedCompany->creators_files ?? [];
+        $fixedAssetFiles = $selectedCompany->fixed_asset_files ?? [];
+        $foundingDecisionFiles = $selectedCompany->founding_decision_files ?? [];
+
+        $files = [
+            'taxIdNumberFiles' => [
+                'title' => 'VÖEN faylları',
+                'files' => $taxIdNumberFiles
+            ],
+            'charterFiles' => [
+                'title' => 'Nizamnamə faylları',
+                'files' => $charterFiles
+            ],
+            'extractFiles' => [
+                'title' => 'Çıxarış faylları',
+                'files' => $extractFiles
+            ],
+            'directorIdCardFiles' => [
+                'title' => 'Direktorun ŞV faylları',
+                'files' => $directorIdCardFiles
+            ],
+            'creatorsFiles' => [
+                'title' => 'Təsisçi faylları',
+                'files' => $creatorsFiles
+            ],
+            'fixedAssetFiles' => [
+                'title' => 'Əsas vəsaitlərin faylları',
+                'files' => $fixedAssetFiles
+            ],
+            'foundingDecisionFiles' => [
+                'title' => 'Təsisçi qərarı faylları',
+                'files' => $foundingDecisionFiles
+            ]
+        ];
+
+        return view('admin.dashboard', compact('selectedCompany', 'files'));
     }
 
     public function selectCompanyView(): View

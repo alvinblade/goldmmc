@@ -1,7 +1,7 @@
 @extends('admin.index')
 
 @section('title')
-    Mükafat əmri əlavə et
+    İşə götürmə əmri əlavə et
 @endsection
 @section('page_styles')
     <link rel="stylesheet" href="{{ asset('assets/admin/js/plugins/flatpickr/flatpickr.min.css') }}">
@@ -15,7 +15,7 @@
                 <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center py-2">
                     <div class="flex-grow-1">
                         <h1 class="h3 fw-bold mb-2">
-                            Mükafat əmri əlavə et
+                            İşə götürmə əmri əlavə et
                         </h1>
                     </div>
                 </div>

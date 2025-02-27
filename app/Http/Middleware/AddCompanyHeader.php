@@ -30,12 +30,17 @@ class AddCompanyHeader
             $servedCompanies = null;
 
             if (auth()->user()->hasRole('accountant')) {
-                $servedCompanies = auth()->user()->companiesServed->pluck('company_name', 'id')->toArray();
+                $servedCompanies = auth()->user()->companiesServed
+                    ->orderBy('id', 'asc')
+                    ->pluck('company_name', 'id')
+                    ->toArray();
                 $company = auth()->user()->companiesServed()->find($companyId);
             }
 
             if (auth()->user()->hasAnyRole('leading_expert', 'department_head')) {
-                $servedCompanies = Company::query()->pluck('company_name', 'id')->toArray();
+                $servedCompanies = Company::query()
+                    ->orderBy('id', 'asc')
+                    ->pluck('company_name', 'id')->toArray();
                 $company = Company::query()->find($companyId);
             }
 
